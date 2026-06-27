@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tramites_extranjeria</title>
+<link rel="icon" href="https://tramites.extranjeria.gob.cl/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Roboto', sans-serif; color: #333; background: #fff; }
+a { text-decoration: none; color: inherit; }
+
+/* NAVBAR */
+.navbar {
+  background: #092039;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  position: relative;
+}
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+.navbar-brand img {
+  height: 60px;
+}
+.navbar-brand .brand-text h1 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+.navbar-brand .brand-text p {
+  font-size: 13px;
+  font-weight: 300;
+  margin: 0;
+  color: #fff;
+}
+.navbar-toggle {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 24px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.navbar-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #092039;
+  z-index: 100;
+  padding: 10px 15px;
+}
+.navbar-menu.active { display: block; }
+.navbar-menu ul {
+  list-style: none;
+  padding: 0;
+}
+.navbar-menu ul li a {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.navbar-menu ul li a .material-icons { font-size: 18px; }
+
+/* TOP BAR (red line) */
+.top-bar {
+  height: 5px;
+  background: linear-gradient(to right, #0033A0 33%, #fff 33%, #fff 66%, #D52B1E 66%);
+}
+
+/* MAIN CONTENT */
+.main-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 30px 15px;
+}
+.main-content h2 {
+  font-size: 26px;
+  font-weight: 500;
+  color: #09132E;
+  margin-bottom: 25px;
+}
+.section-title {
+  font-size: 26px;
+  font-weight: 500;
+  color: #09132E;
+  margin-bottom: 24px;
+}
+
+/* CATEGORY CARDS */
+.categories-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.category-card {
+  background: #fff;
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 1px 1px 4px 0px #ccc;
+}
+.category-card-body {
+  display: flex;
+  align-items: flex-start;
+  padding: 25px 20px;
+  gap: 15px;
+}
+.category-icon {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+}
+.category-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.category-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+.category-info p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+.category-link {
+  display: block;
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: opacity 0.2s;
+  border-radius: 0 0 3px 3px;
+}
+.category-link:hover { opacity: 0.9; }
+.cat-pt .category-link { background: rgb(133,158,107); }
+.cat-rt .category-link { background: rgb(225,117,95); }
+.cat-rd .category-link { background: rgb(46,92,127); }
+.cat-nac .category-link { background: rgb(72,184,192); }
+.cat-ref .category-link { background: rgb(226,172,27); }
+.cat-vd .category-link { background: rgb(110,132,143); }
+
+/* DESTACADOS SECTION */
+.destacados-section {
+  margin-top: 40px;
+}
+.destacado-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: 3px solid #0053AB;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 25px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.destacado-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.destacado-card h3 .material-icons {
+  color: #0053AB;
+  font-size: 28px;
+}
+.destacado-card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+.destacado-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.destacado-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #0053AB;
+}
+.destacado-links a .material-icons { font-size: 18px; }
+.destacado-links a.red-link { color: #EB1414; }
+.destacado-links a.red-link .material-icons { color: #EB1414; }
+
+.destacado-card .more-info {
+  color: #0053AB;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.destacado-card .ir-tramite {
+  color: #EB1414;
+  font-size: 14px;
+  display: block;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* FOOTER */
+.footer {
+  background: #092039;
+  color: #fff;
+  text-align: center;
+  padding: 50px 15px 30px;
+}
+.footer-logo {
+  margin-bottom: 5px;
+}
+.footer-logo img {
+  height: 70px;
+  opacity: 0.9;
+}
+.footer-org {
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 3px;
+}
+.footer-gov {
+  font-size: 13px;
+  font-weight: 300;
+  margin-bottom: 15px;
+}
+.footer-flag {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+.footer-flag img {
+  height: 14px;
+  width: 200px;
+}
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+.footer-links li {
+  margin-bottom: 8px;
+}
+.footer-links li a {
+  color: #fff;
+  font-size: 14px;
+  text-decoration: underline;
+  font-weight: 300;
+}
+.footer-social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.footer-social a img {
+  height: 28px;
+  width: 28px;
+  filter: brightness(0) invert(1);
+}
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.footer-bottom img {
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+.footer-bottom span {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+.footer-bottom span b {
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .navbar-brand .brand-text h1 { font-size: 22px; }
+  .navbar-brand .brand-text p { font-size: 14px; }
+  .main-content { padding: 40px 30px; }
+  .main-content h2 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <img src="https://tramites.extranjeria.gob.cl/logos/1744722678_color_sermig.png" alt="Portal de Trámites Digitales">
+    <div class="brand-text">
+      <h1>Portal de Trámites Digitales</h1>
+      <p>Servicio Nacional de Migraciones</p>
+    </div>
+  </a>
+  <button class="navbar-toggle" onclick="document.querySelector('.navbar-menu').classList.toggle('active')">☰</button>
+  <div class="navbar-menu">
+    <ul>
+      <li><a href="#"><span class="material-icons">person</span> Crear cuenta</a></li>
+      <li><a href="#"><span class="material-icons">login</span> Iniciar sesión</a></li>
+      <li><a href="#">Iniciar con ClaveÚnica</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <h2>Trámites disponibles</h2>
+  <hr style="border: none; border-top: 1px solid rgba(9,19,46,0.1); margin-bottom: 25px;">
+
+  <h3 class="section-title">Categorías</h3>
+
+  <div class="categories-grid">
+
+    <!-- Permanencia Transitoria -->
+    <div class="category-card cat-pt">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-PT.gif" alt="Permanencia Transitoria">
+        </div>
+        <div class="category-info">
+          <h3>Permanencia Transitoria</h3>
+          <p>Para personas que visitan Chile por tiempo acotado y sin intención de establecerse en el país. Ejemplo: turistas, negocios, otros.</p>
+        </div>
+      </div>
+      <a href="#" class="category-link">Listado de trámites →</a>
+    </div>
+
+    <!-- Residencia Temporal -->
+    <div class="category-card cat-rt">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-RT.gif" alt="Residencia Temporal">
+        </div>
+        <div class="category-info">
+          <h3>Residencia Temporal</h3>
+          <p>Para personas extranjeras que tienen el propósito de establecerse en Chile hasta por 2 años.</p>
+        </div>
+      </div>
+      <a href="#" class="category-link">Listado de trámites →</a>
+    </div>
+
+    <!-- Residencia Definitiva -->
+    <div class="category-card cat-rd">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-RD.gif" alt="Residencia Definitiva">
+        </div>
+        <div class="category-info">
+          <h3>Residencia Definitiva</h3>
+          <p>Para personas con Residencia Temporal vigente, que desean radicarse por tiempo indefinido en Chile.</p>
+        </div>
+      </div>
+      <a href="#" class="category-link">Listado de trámites →</a>
+    </div>
+
+    <!-- Nacionalidad -->
+    <div class="category-card cat-nac">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-NAC.gif" alt="Nacionalidad">
+        </div>
+        <div class="category-info">
+          <h3>Nacionalidad</h3>
+          <p>Para personas que buscan adquirir la nacionalidad chilena u otros trámites relacionados.</p>
+        </div>
+      </div>
+      <a href="#" class="category-link">Listado de trámites →</a>
+    </div>
+
+    <!-- Refugio -->
+    <div class="category-card cat-ref">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-REF.gif" alt="Refugio">
+        </div>
+        <div class="category-info">
+          <h3>Refugio</h3>
+          <p>Prórroga de residencia temporal para personas solicitantes de refugio, cuyo caso está en proceso de análisis.</p>
+        </div>
+      </div>
+      <a href="#" class="category-link">Listado de trámites →</a>
+    </div>
+
+    <!-- Verificación de documentos -->
+    <div class="category-card cat-vd">
+      <div class="category-card-body">
+        <div class="category-icon">
+          <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-VD.gif" alt="Verificación de documentos">
+        </div>
+        <div class="category-info">
+          <h3>Verificación de documentos</h3>
+          <p>Aquí podrás verificar: Estampado Electrónico, certificado de Permanencia Definitiva digital y Firma Electrónica Avanzada.</p>
+        </div>
+      </div>
+      <a href="verificacion.html" class="category-link">Listado de trámites →</a>
+    </div>
+
+  </div>
+
+  <!-- DESTACADOS -->
+  <div class="destacados-section">
+    <h3 class="section-title">Destacados</h3>
+
+    <!-- Consulta estado -->
+    <div class="destacado-card">
+      <h3><span class="material-icons">search</span> Consulta estado de trámite</h3>
+      <p>Para conocer la etapa en que se encuentra una solicitud de Residencia Temporal, Definitiva o Nacionalidad.</p>
+      <div class="destacado-links">
+        <a href="#"><span class="material-icons">vpn_key</span> Iniciar con ClaveÚnica →</a>
+        <a href="#" class="red-link"><span class="material-icons">person</span> Iniciar sesión →</a>
+      </div>
+    </div>
+
+    <!-- Declaración de infracción -->
+    <div class="destacado-card">
+      <h3><span class="material-icons">calculate</span> Declaración de infracción y cálculo de multa</h3>
+      <p>Permite a las personas que han cometido alguna infracción migratoria, calcular su multa y enviar documentos para sus descargos.</p>
+      <a href="#" class="more-info">Más información</a>
+      <a href="#" class="ir-tramite">Ir al trámite→</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    <img src="https://www-pre.serviciomigraciones.cl/wp-content/uploads/reserva/images/logo-migraciones_1@72x.png" alt="Migraciones Chile">
+  </div>
+  <p class="footer-org">Servicio Nacional de Migraciones</p>
+  <p class="footer-gov">Gobierno de Chile</p>
+  <div class="footer-flag">
+    <img src="https://serviciomigraciones.cl/wp-content/uploads/2021/09/line-300x27.png" alt="Chile">
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Quiénes somos</a></li>
+    <li><a href="#">Requisitos de trámites</a></li>
+    <li><a href="#">Reserva tu hora</a></li>
+    <li><a href="#">Oficinas regionales</a></li>
+    <li><a href="#">Ayuda Migraciones</a></li>
+    <li><a href="#">Noticias</a></li>
+  </ul>
+  <div class="footer-social">
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-face.svg" alt="Facebook"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-inst.svg" alt="Instagram"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-xtwitter.svg" alt="Twitter"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-youtube.svg" alt="YouTube"></a>
+  </div>
+  <div class="footer-bottom">
+    <img src="https://tramites.extranjeria.gob.cl/img/ico-mapa.svg" alt="Servicio Migraciones">
+    <span>servicio<b>migraciones</b>.cl</span>
+  </div>
+</footer>
+
+</body>
+</html>
