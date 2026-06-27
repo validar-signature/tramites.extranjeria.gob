@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tramites_extranjeria</title>
+<link rel="icon" href="https://tramites.extranjeria.gob.cl/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Roboto', sans-serif; color: #333; background: #f5f5f5; }
+a { text-decoration: none; color: inherit; }
+
+/* NAVBAR */
+.navbar {
+  background: #092039;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  position: relative;
+}
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+.navbar-brand img { height: 60px; }
+.navbar-brand .brand-text h1 { font-size: 18px; font-weight: 700; color: #fff; }
+.navbar-brand .brand-text p { font-size: 13px; font-weight: 300; color: #fff; }
+.navbar-toggle {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 24px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.navbar-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: #092039;
+  z-index: 100;
+  padding: 10px 15px;
+}
+.navbar-menu.active { display: block; }
+.navbar-menu ul { list-style: none; padding: 0; }
+.navbar-menu ul li a {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* BREADCRUMB */
+.breadcrumb-bar {
+  background: #fff;
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.breadcrumb-bar a {
+  color: #666;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.breadcrumb-bar a .material-icons { font-size: 16px; }
+
+/* MAIN */
+.main-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 30px 15px 40px;
+}
+
+/* FORM */
+.form-container {
+  background: #fff;
+  border-radius: 4px;
+  padding: 30px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.form-container h2 {
+  font-size: 26px;
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 15px;
+}
+.form-help {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+.form-help a {
+  color: #0053AB;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 0.8px solid #CED4DA;
+  border-radius: 4px;
+  font-family: 'Roboto', sans-serif;
+  transition: border-color 0.2s;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: #0053AB;
+  box-shadow: 0 0 0 2px rgba(0,83,171,0.15);
+}
+.form-group input.error {
+  border-color: #EB1414;
+}
+.error-text {
+  color: #EB1414;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+.error-text.visible { display: block; }
+
+.btn-submit {
+  background: #EB1414;
+  color: #fff;
+  border: 1px solid #EB1414;
+  padding: 8px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background 0.2s;
+}
+.btn-submit:hover { background: #d41212; }
+.btn-submit:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* LOADING OVERLAY */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.85);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.loading-overlay.active { display: flex; }
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #092039;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* RESULT */
+.result-container {
+  display: none;
+}
+.result-container.active {
+  display: block;
+}
+.result-header {
+  margin-bottom: 20px;
+}
+.result-header h2 {
+  font-size: 26px;
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 15px;
+}
+.result-header hr {
+  border: none;
+  border-top: 1px solid rgba(9,19,46,0.1);
+}
+
+/* FOUND result */
+.result-found {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 25px 20px;
+  margin-bottom: 20px;
+}
+.result-found .valid-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4edda;
+  color: #155724;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  border: 1px solid #c3e6cb;
+}
+.result-found .valid-badge .material-icons {
+  font-size: 20px;
+}
+.result-data {
+  margin-bottom: 20px;
+}
+.result-data table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.result-data table td {
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+}
+.result-data table td:first-child {
+  font-weight: 500;
+  color: #555;
+  width: 200px;
+}
+.result-data table td:last-child {
+  color: #333;
+}
+.result-pdf-viewer {
+  width: 100%;
+  height: 500px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+/* NOT FOUND result */
+.result-not-found h2 {
+  font-size: 26px;
+  font-weight: 300;
+  color: #333;
+}
+
+/* Action buttons row (Volver / Siguiente style) */
+.result-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+.btn-volver {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  padding: 6px 12px;
+}
+.btn-volver:hover { color: #333; }
+.btn-siguiente-red {
+  background: #EB1414;
+  color: #fff;
+  border: 1px solid #EB1414;
+  padding: 6px 16px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+}
+.btn-siguiente-red:hover { background: #d41212; }
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  padding: 20px;
+}
+.modal-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-box h3 button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+}
+.modal-box p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+.modal-box img {
+  max-width: 100%;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+.modal-close-btn {
+  background: #6E848F;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+/* FOOTER */
+.footer {
+  background: #092039;
+  color: #fff;
+  text-align: center;
+  padding: 50px 15px 30px;
+}
+.footer-logo { margin-bottom: 5px; }
+.footer-logo img { height: 70px; opacity: 0.9; }
+.footer-org { font-size: 14px; font-weight: 300; margin-bottom: 3px; }
+.footer-gov { font-size: 13px; font-weight: 300; margin-bottom: 15px; }
+.footer-flag { display: flex; justify-content: center; margin-bottom: 30px; }
+.footer-flag img { height: 14px; width: 200px; }
+.footer-links { list-style: none; padding: 0; margin-bottom: 30px; }
+.footer-links li { margin-bottom: 8px; }
+.footer-links li a { color: #fff; font-size: 14px; text-decoration: underline; font-weight: 300; }
+.footer-social { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; }
+.footer-social a img { height: 28px; width: 28px; filter: brightness(0) invert(1); }
+.footer-bottom { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
+.footer-bottom img { height: 24px; filter: brightness(0) invert(1); }
+.footer-bottom span { font-size: 18px; font-weight: 300; }
+.footer-bottom span b { font-weight: 700; }
+
+@media (min-width: 768px) {
+  .navbar-brand .brand-text h1 { font-size: 22px; }
+  .form-container { padding: 40px 30px; }
+  .form-container h2 { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <img src="https://tramites.extranjeria.gob.cl/logos/1744722678_color_sermig.png" alt="Portal de Trámites Digitales">
+    <div class="brand-text">
+      <h1>Portal de Trámites Digitales</h1>
+      <p>Servicio Nacional de Migraciones</p>
+    </div>
+  </a>
+  <button class="navbar-toggle" onclick="document.querySelector('.navbar-menu').classList.toggle('active')">☰</button>
+  <div class="navbar-menu">
+    <ul>
+      <li><a href="#"><span class="material-icons">person</span> Crear cuenta</a></li>
+      <li><a href="#"><span class="material-icons">login</span> Iniciar sesión</a></li>
+      <li><a href="#">Iniciar con ClaveÚnica</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="index.html"><span class="material-icons">home</span> Inicio</a>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <div class="form-container">
+    <h2>Verificación de Estampado Electrónico</h2>
+    <p class="form-help">
+      Ingrese los datos del estampado electrónico a validar. 
+      <a onclick="document.getElementById('helpModal').classList.add('active')">¿Donde encuentro los números?</a>
+    </p>
+
+    <div id="formSection">
+      <div class="form-group">
+        <label>Código de Verificación (*)</label>
+        <input type="text" id="codigoVerificacion" placeholder="">
+        <p class="error-text" id="errorCodigo">Este campo es obligatorio</p>
+      </div>
+      <div class="form-group">
+        <label>Número de Estampado Electrónico (EE) (*)</label>
+        <input type="text" id="numeroEstampado" placeholder="">
+        <p class="error-text" id="errorEstampado">Este campo es obligatorio</p>
+      </div>
+      <button class="btn-submit" id="btnSiguiente" onclick="validarEstampado()">Siguiente</button>
+    </div>
+
+    <div id="resultSection" class="result-container"></div>
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div id="helpModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+  <div class="modal-box">
+    <h3>
+      Ayuda: Estampado Electrónico
+      <button onclick="document.getElementById('helpModal').classList.remove('active')">×</button>
+    </h3>
+    <p>Los números a ingresar se presentan en la siguiente imagen:</p>
+    <img src="https://www.extranjeria.gob.cl/media/2020/09/Estampado-Electr%C3%B3nico.png" alt="Ejemplo Estampado Electrónico">
+    <br>
+    <button class="modal-close-btn" onclick="document.getElementById('helpModal').classList.remove('active')">Close</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <p class="loading-text">Consultando estampado electrónico...</p>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    <img src="https://www-pre.serviciomigraciones.cl/wp-content/uploads/reserva/images/logo-migraciones_1@72x.png" alt="Migraciones Chile">
+  </div>
+  <p class="footer-org">Servicio Nacional de Migraciones</p>
+  <p class="footer-gov">Gobierno de Chile</p>
+  <div class="footer-flag">
+    <img src="https://serviciomigraciones.cl/wp-content/uploads/2021/09/line-300x27.png" alt="Chile">
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Quiénes somos</a></li>
+    <li><a href="#">Requisitos de trámites</a></li>
+    <li><a href="#">Reserva tu hora</a></li>
+    <li><a href="#">Oficinas regionales</a></li>
+    <li><a href="#">Ayuda Migraciones</a></li>
+    <li><a href="#">Noticias</a></li>
+  </ul>
+  <div class="footer-social">
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-face.svg" alt="Facebook"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-inst.svg" alt="Instagram"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-xtwitter.svg" alt="Twitter"></a>
+    <a href="#"><img src="https://tramites.extranjeria.gob.cl/img/ico-youtube.svg" alt="YouTube"></a>
+  </div>
+  <div class="footer-bottom">
+    <img src="https://tramites.extranjeria.gob.cl/img/ico-mapa.svg" alt="Servicio Migraciones">
+    <span>servicio<b>migraciones</b>.cl</span>
+  </div>
+</footer>
+
+<script>
+// ===== MAKE WEBHOOK INTEGRATION =====
+const WEBHOOK_URL = 'https://hook.us2.make.com/iq6ps3txx1jaxr91mje7sx47ynbta3kb';
+
+function validarEstampado() {
+  const codigo = document.getElementById('codigoVerificacion').value.trim();
+  const estampado = document.getElementById('numeroEstampado').value.trim();
+  
+  // Reset errors
+  document.getElementById('errorCodigo').classList.remove('visible');
+  document.getElementById('errorEstampado').classList.remove('visible');
+  document.getElementById('codigoVerificacion').classList.remove('error');
+  document.getElementById('numeroEstampado').classList.remove('error');
+  
+  let hasError = false;
+  
+  if (!codigo) {
+    document.getElementById('errorCodigo').classList.add('visible');
+    document.getElementById('codigoVerificacion').classList.add('error');
+    hasError = true;
+  }
+  if (!estampado) {
+    document.getElementById('errorEstampado').classList.add('visible');
+    document.getElementById('numeroEstampado').classList.add('error');
+    hasError = true;
+  }
+  
+  if (hasError) return;
+  
+  // Show loading
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('btnSiguiente').disabled = true;
+  
+  // Send to Make webhook
+  const payload = {
+    entity: 'extranjeria',
+    uuid: codigo,
+    numero_estampado: estampado
+  };
+  
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('btnSiguiente').disabled = false;
+    
+    // Hide form, show result
+    document.getElementById('formSection').style.display = 'none';
+    document.querySelector('.form-help').style.display = 'none';
+    document.querySelector('.form-container h2').style.display = 'none';
+    
+    const resultSection = document.getElementById('resultSection');
+    resultSection.classList.add('active');
+    
+    if (data.found) {
+      // === FOUND: Show validation result like original site ===
+      let html = '<div class="result-header">';
+      html += '<h2>Verificación de Estampado Electrónico</h2>';
+      html += '<hr>';
+      html += '</div>';
+      
+      html += '<div class="result-found">';
+      html += '<div class="valid-badge"><span class="material-icons">check_circle</span> Estampado Electrónico vigente</div>';
+      
+      html += '<div class="result-data"><table>';
+      if (data.name) {
+        html += '<tr><td>Titular</td><td>' + data.name + '</td></tr>';
+      }
+      html += '<tr><td>N° Estampado Electrónico</td><td>' + estampado + '</td></tr>';
+      html += '<tr><td>Código de Verificación</td><td>' + codigo + '</td></tr>';
+      html += '<tr><td>Estado</td><td><strong style="color:#155724;">Vigente</strong></td></tr>';
+      html += '</table></div>';
+      
+      if (data.pdf) {
+        // Convert base64 to blob and show PDF viewer
+        try {
+          const byteCharacters = atob(data.pdf);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'application/pdf' });
+          const pdfUrl = URL.createObjectURL(blob);
+          
+          html += '<iframe class="result-pdf-viewer" src="' + pdfUrl + '"></iframe>';
+        } catch(e) {
+          console.error('Error rendering PDF:', e);
+        }
+      }
+      
+      html += '</div>';
+      
+      // Action buttons like original
+      html += '<div class="result-actions">';
+      html += '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>';
+      html += '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Nueva consulta</button>';
+      html += '</div>';
+      
+      resultSection.innerHTML = html;
+      
+    } else {
+      // === NOT FOUND: Replicate original "Estampado Electrónico no encontrado" ===
+      let html = '<div class="result-not-found">';
+      html += '<h2>Estampado Electrónico no encontrado</h2>';
+      html += '</div>';
+      html += '<div class="result-actions">';
+      html += '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>';
+      html += '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Siguiente</button>';
+      html += '</div>';
+      
+      resultSection.innerHTML = html;
+    }
+  })
+  .catch(error => {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('btnSiguiente').disabled = false;
+    
+    // Hide form, show error
+    document.getElementById('formSection').style.display = 'none';
+    document.querySelector('.form-help').style.display = 'none';
+    document.querySelector('.form-container h2').style.display = 'none';
+    
+    const resultSection = document.getElementById('resultSection');
+    resultSection.classList.add('active');
+    resultSection.innerHTML = '<div class="result-not-found">' +
+      '<h2>Error de conexión</h2>' +
+      '<p style="font-size:14px;color:#555;margin-top:10px;">No se pudo conectar con el servidor de verificación. Por favor intente más tarde.</p>' +
+      '</div>' +
+      '<div class="result-actions">' +
+      '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>' +
+      '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Intentar nuevamente</button>' +
+      '</div>';
+  });
+}
+
+function nuevaConsulta() {
+  // Show form again, hide result
+  document.getElementById('formSection').style.display = '';
+  document.querySelector('.form-help').style.display = '';
+  document.querySelector('.form-container h2').style.display = '';
+  document.getElementById('codigoVerificacion').value = '';
+  document.getElementById('numeroEstampado').value = '';
+  const resultSection = document.getElementById('resultSection');
+  resultSection.classList.remove('active');
+  resultSection.innerHTML = '';
+}
+
+// Allow Enter key to submit
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    validarEstampado();
+  }
+});
+</script>
+
+</body>
+</html>
