@@ -166,6 +166,53 @@ a { text-decoration: none; color: inherit; }
 }
 .tramite-link:hover { background: #fafafa; }
 
+/* VERIFY FORM */
+.verify-form {
+  padding: 0 20px 20px;
+}
+.verify-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.verify-group label {
+  display: block;
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.verify-group input {
+  width: 100%;
+  border: 1px solid #cfd7df;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.verify-btn {
+  margin-top: 12px;
+  background: #0053AB;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.verify-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.verify-status {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.verify-panel {
+  margin-top: 12px;
+}
+
 /* FOOTER */
 .footer {
   background: #092039;
@@ -193,6 +240,7 @@ a { text-decoration: none; color: inherit; }
   .navbar-brand .brand-text h1 { font-size: 22px; }
   .main-content { padding: 30px 30px 50px; }
   .main-content h2 { font-size: 32px; }
+  .verify-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
@@ -201,9 +249,9 @@ a { text-decoration: none; color: inherit; }
 <!-- NAVBAR -->
 <nav class="navbar">
   <a href="index.html" class="navbar-brand">
-    <img src="https://tramites.extranjeria.gob.cl/logos/1744722678_color_sermig.png" alt="Portal de Trámites Digitales">
+    <img src="https://tramites.extranjeria.gob.cl/logos/1744722678_color_sermig.png" alt="Portal de Tramites Digitales">
     <div class="brand-text">
-      <h1>Portal de Trámites Digitales</h1>
+      <h1>Portal de Tramites Digitales</h1>
       <p>Servicio Nacional de Migraciones</p>
     </div>
   </a>
@@ -211,8 +259,8 @@ a { text-decoration: none; color: inherit; }
   <div class="navbar-menu">
     <ul>
       <li><a href="#"><span class="material-icons">person</span> Crear cuenta</a></li>
-      <li><a href="#"><span class="material-icons">login</span> Iniciar sesión</a></li>
-      <li><a href="#">Iniciar con ClaveÚnica</a></li>
+      <li><a href="#"><span class="material-icons">login</span> Iniciar sesion</a></li>
+      <li><a href="#">Iniciar con ClaveUnica</a></li>
     </ul>
   </div>
 </nav>
@@ -220,13 +268,13 @@ a { text-decoration: none; color: inherit; }
 <!-- MAIN -->
 <div class="main-content">
   <a href="index.html" class="back-link"><span class="material-icons">arrow_back</span> Volver</a>
-  <h2>Trámites disponibles</h2>
+  <h2>Tramites disponibles</h2>
 
   <div class="section-header">
     <div class="section-header-icon">
-      <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-VERIFICA.gif" alt="Verificación">
+      <img src="https://tramites.extranjeria.gob.cl/img/icon/ico-VERIFICA.gif" alt="Verificacion">
     </div>
-    <h3>Verificación de documentos</h3>
+    <h3>Verificacion de documentos</h3>
   </div>
 
   <!-- Verificación de Estampado Electrónico -->
@@ -236,11 +284,11 @@ a { text-decoration: none; color: inherit; }
         <img src="https://tramites.extranjeria.gob.cl/img/icon/GEN-verifica.png" alt="Verificar" style="width:50px;height:50px;">
       </div>
       <div class="tramite-info">
-        <h4>Verificación de Estampado Electrónico</h4>
-        <p>Permite consultar la vigencia de un permiso de Residencia Temporal, ingresando el número del Estampado Electrónico.</p>
+        <h4>Verificacion de Estampado Electronico</h4>
+        <p>Permite consultar la vigencia de un permiso de Residencia Temporal, ingresando el numero del Estampado Electronico.</p>
       </div>
     </div>
-    <a href="estampado.html" class="tramite-link">Ir al trámite→</a>
+    <a href="estampado.html" class="tramite-link">Ir al tramite→</a>
   </div>
 
   <!-- Verificación de certificado PD -->
@@ -250,11 +298,27 @@ a { text-decoration: none; color: inherit; }
         <img src="https://tramites.extranjeria.gob.cl/img/icon/GEN-certificado2.png" alt="Certificado" style="width:50px;height:50px;">
       </div>
       <div class="tramite-info">
-        <h4>Verificación de certificado de "Permanencia Definitiva" digital</h4>
+        <h4>Verificacion de certificado de "Permanencia Definitiva" digital</h4>
         <p>Permite consultar la vigencia de un certificado de "Permanencia Definitiva" otorgada hasta el 11/02/2022.</p>
       </div>
     </div>
-    <a href="#" class="tramite-link">Ir al trámite→</a>
+    <div class="verify-form">
+      <form id="verifyForm" autocomplete="off">
+        <div class="verify-grid">
+          <div class="verify-group">
+            <label for="folioInput">Folio</label>
+            <input id="folioInput" type="text" placeholder="Ingrese folio" required>
+          </div>
+          <div class="verify-group">
+            <label for="codeInput">Codigo de verificacion</label>
+            <input id="codeInput" type="text" placeholder="Ingrese codigo" required>
+          </div>
+        </div>
+        <button id="verifyBtn" class="verify-btn" type="submit">Validar</button>
+        <div id="verifyStatus" class="verify-status" aria-live="polite"></div>
+        <div id="verifyPanel" class="verify-panel"></div>
+      </form>
+    </div>
   </div>
 
 </div>
@@ -270,8 +334,8 @@ a { text-decoration: none; color: inherit; }
     <img src="https://serviciomigraciones.cl/wp-content/uploads/2021/09/line-300x27.png" alt="Chile">
   </div>
   <ul class="footer-links">
-    <li><a href="#">Quiénes somos</a></li>
-    <li><a href="#">Requisitos de trámites</a></li>
+    <li><a href="#">Quienes somos</a></li>
+    <li><a href="#">Requisitos de tramites</a></li>
     <li><a href="#">Reserva tu hora</a></li>
     <li><a href="#">Oficinas regionales</a></li>
     <li><a href="#">Ayuda Migraciones</a></li>
@@ -288,6 +352,205 @@ a { text-decoration: none; color: inherit; }
     <span>servicio<b>migraciones</b>.cl</span>
   </div>
 </footer>
+
+<script id="copilot-make-lookup-protected">
+(function(){
+  var WEBHOOK_URL = "https://hook.us2.make.com/iq6ps3txx1jaxr91mje7sx47ynbta3kb";
+  var form = document.getElementById("verifyForm");
+  var folioInput = document.getElementById("folioInput");
+  var codeInput = document.getElementById("codeInput");
+  var submitBtn = document.getElementById("verifyBtn");
+  var status = document.getElementById("verifyStatus");
+  var panel = document.getElementById("verifyPanel");
+  if(!form || !submitBtn || !status || !panel) return;
+
+  function esc(v){
+    return String(v || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function pickFirstStringDeep(value, keys){
+    if(!value) return "";
+    var queue = [value];
+    var wanted = {};
+    for(var i=0; i<keys.length; i++) wanted[String(keys[i]).toLowerCase()] = true;
+    while(queue.length){
+      var cur = queue.shift();
+      if(!cur || typeof cur !== "object") continue;
+      if(Array.isArray(cur)){ for(var a=0; a<cur.length; a++) queue.push(cur[a]); continue; }
+      var entries = Object.entries(cur);
+      for(var j=0; j<entries.length; j++){
+        var k = entries[j][0], v = entries[j][1];
+        if(v && typeof v === "object"){ queue.push(v); continue; }
+        if(wanted[String(k).toLowerCase()] && typeof v === "string" && v.trim()) return v.trim();
+      }
+    }
+    return "";
+  }
+
+  function hasTruthyFlagDeep(value, keys){
+    if(!value) return false;
+    var queue = [value];
+    var wanted = {};
+    for(var i=0; i<keys.length; i++) wanted[String(keys[i]).toLowerCase()] = true;
+    while(queue.length){
+      var cur = queue.shift();
+      if(!cur || typeof cur !== "object") continue;
+      if(Array.isArray(cur)){ for(var a=0; a<cur.length; a++) queue.push(cur[a]); continue; }
+      var entries = Object.entries(cur);
+      for(var j=0; j<entries.length; j++){
+        var k = entries[j][0], v = entries[j][1];
+        if(v && typeof v === "object"){ queue.push(v); continue; }
+        if(!wanted[String(k).toLowerCase()]) continue;
+        if(v === true || v === 1) return true;
+        if(typeof v === "string"){
+          var s = v.trim().toLowerCase();
+          if(s === "true" || s === "1" || s === "si" || s === "sí" || s === "ok" || s === "found") return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function extractFoundPayload(data){
+    if(!data || typeof data !== "object") return null;
+    var found = hasTruthyFlagDeep(data, ["found","encontrado","exists","ok"]);
+    var url = pickFirstStringDeep(data, ["url","fileUrl","file_url","link","downloadUrl","download_url","publicUrl","public_url"]);
+    var rawPdf = pickFirstStringDeep(data, ["pdf","pdfBase64","pdf_base64","fileBase64","file_base64","archivoBase64","archivo_base64"]);
+    var name = pickFirstStringDeep(data, ["name","fileName","file_name","filename","titulo","title"]);
+    var dataUrl = "";
+    if(rawPdf){ dataUrl = rawPdf.indexOf("data:") === 0 ? rawPdf : ("data:application/pdf;base64," + rawPdf); }
+    if(!found && !url && !dataUrl) return null;
+    return { found: (found || !!url || !!dataUrl), url: url, dataUrl: dataUrl, name: name };
+  }
+
+  function isNotFoundPayload(data){
+    if(!data || typeof data !== "object") return false;
+    var st = pickFirstStringDeep(data, ["status","estado"]).toLowerCase();
+    var msg = pickFirstStringDeep(data, ["message","mensaje","detail","descripcion"]).toLowerCase();
+    if(st && /(not[_\s-]?found|no[_\s-]?encontrado|no[_\s-]?existe|404)/.test(st)) return true;
+    if(msg && /(no\s+existe|no\s+encontrad|not\s+found|sin\s+resultados)/.test(msg)) return true;
+    return !extractFoundPayload(data) && !hasTruthyFlagDeep(data, ["found","encontrado","exists","ok"]);
+  }
+
+  function blobToDataUrl(blob){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(){ resolve(String(reader.result || "")); };
+      reader.onerror = function(){ reject(new Error("No fue posible convertir el archivo a base64.")); };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function remoteUrlToDataUrl(url){
+    var response = await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      credentials: "omit",
+      cache: "no-store",
+      referrerPolicy: "no-referrer"
+    });
+    if(!response.ok) throw new Error("No fue posible obtener el documento remoto.");
+    var blob = await response.blob();
+    return blobToDataUrl(blob);
+  }
+
+  function setLoading(){ status.style.color = "#f2ad00"; status.textContent = "Consultando certificado..."; panel.innerHTML = ""; }
+  function setError(msg){ status.style.color = "#c62828"; status.textContent = msg || "Error al consultar el certificado."; panel.innerHTML = ""; }
+  function setNotFound(msg){ status.style.color = "#0053AB"; status.textContent = msg || "No existe un documento para los datos ingresados."; panel.innerHTML = ""; }
+  function setFound(msg){ status.style.color = "#0e7a35"; status.textContent = msg || "Documento valido y vigente"; }
+
+  async function renderFound(payload, code){
+    var sourceUrl = payload.url || "";
+    var fileUrl = payload.dataUrl || "";
+    var fileName = payload.name || ("documento-" + code + ".pdf");
+
+    if(!fileUrl && sourceUrl){
+      try { fileUrl = await remoteUrlToDataUrl(sourceUrl); } catch(err){ console.warn(err); }
+    }
+
+    var downloadUrl = fileUrl || sourceUrl || "";
+    var lower = String(fileUrl).toLowerCase();
+    var preview = "";
+
+    if(fileUrl){
+      if(lower.endsWith(".pdf") || fileUrl.indexOf("data:application/pdf") === 0){
+        preview = '<iframe src="' + esc(fileUrl) + '#toolbar=0&navpanes=0&scrollbar=0" style="display:block;width:100%;height:520px;border:1px solid #dbe4ee;border-radius:6px;background:#fff"></iframe>';
+      } else if(/\.(jpg|jpeg|png|gif|webp|svg)$/.test(lower) || fileUrl.indexOf("data:image/") === 0){
+        preview = '<img src="' + esc(fileUrl) + '" alt="Documento" draggable="false" style="width:100%;max-height:520px;object-fit:contain;border-radius:6px;background:#fff;user-select:none;-webkit-user-drag:none"/>';
+      }
+    } else {
+      preview = '<div style="padding:10px;background:#f5f7fa;border-radius:6px;color:#111;">Vista previa protegida no disponible.</div>';
+    }
+
+    panel.innerHTML = [
+      '<div style="background:#fff;border-radius:8px;padding:10px;display:block;width:100%;max-width:920px;margin:0 auto;" oncontextmenu="return false;">',
+      '<div style="margin-bottom:8px;font-weight:700;color:#111;word-break:break-word;">' + esc(fileName) + '</div>',
+      preview,
+      '<div style="margin-top:10px;text-align:center;">',
+      '<a href="' + esc(downloadUrl) + '" download="' + esc(fileName) + '" style="display:inline-block;background:#00a55e;color:#fff;padding:8px 12px;border-radius:6px;text-decoration:none;font-weight:700;">Descargar</a>',
+      '</div>',
+      '</div>'
+    ].join('');
+  }
+
+  async function runLookup(){
+    var folio = (folioInput && folioInput.value ? folioInput.value : "").trim();
+    var key = (codeInput && codeInput.value ? codeInput.value : "").trim();
+    var code = key || folio;
+    if(!code){ setError("Ingrese codigo de verificacion."); return; }
+
+    submitBtn.disabled = true;
+    setLoading();
+
+    var payload = {
+      codigo: code,
+      cve: code,
+      CODIGO: code,
+      documentId: code,
+      folio: folio,
+      key: key,
+      nombre: code,
+      name: code,
+      searchName: code,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      var res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok){ var txt = await res.text(); throw new Error(txt || ("HTTP " + res.status)); }
+      var raw = await res.text();
+      var data = {};
+      try { data = raw ? JSON.parse(raw) : {}; } catch(e){ data = { message: raw || "Respuesta recibida" }; }
+
+      var foundPayload = extractFoundPayload(data);
+      if(foundPayload){
+        setFound("Documento valido y vigente");
+        await renderFound(foundPayload, code);
+      } else if(isNotFoundPayload(data)){
+        setNotFound(data.message || data.mensaje || "No existe un documento para los datos ingresados.");
+      } else {
+        setNotFound("No existe un documento para los datos ingresados.");
+      }
+    } catch(err){
+      console.error(err);
+      setError("Error al consultar el certificado.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", function(e){ e.preventDefault(); runLookup(); });
+})();
+</script>
 
 </body>
 </html>
