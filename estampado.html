@@ -413,7 +413,7 @@ a { text-decoration: none; color: inherit; }
   <div class="form-container">
     <h2>Verificación de Estampado Electrónico</h2>
     <p class="form-help">
-      Ingrese los datos del estampado electrónico a validar. 
+      Ingrese los datos del estampado electrónico a validar.
       <a onclick="document.getElementById('helpModal').classList.add('active')">¿Donde encuentro los números?</a>
     </p>
 
@@ -489,18 +489,53 @@ a { text-decoration: none; color: inherit; }
 // ===== MAKE WEBHOOK INTEGRATION =====
 const WEBHOOK_URL = 'https://hook.us2.make.com/iq6ps3txx1jaxr91mje7sx47ynbta3kb';
 
-function validarEstampado() {
+function escapeHtml(v) {
+  return String(v || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function toPdfDataUrl(pdfValue) {
+  if (!pdfValue) return '';
+  const s = String(pdfValue).trim();
+  if (!s) return '';
+  if (s.indexOf('data:application/pdf') === 0) return s;
+  return 'data:application/pdf;base64,' + s;
+}
+
+async function urlToDataUrl(url) {
+  const res = await fetch(url, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'omit',
+    cache: 'no-store',
+    referrerPolicy: 'no-referrer'
+  });
+  if (!res.ok) throw new Error('No fue posible obtener el documento remoto.');
+  const blob = await res.blob();
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('No fue posible convertir el archivo a base64.'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function validarEstampado() {
   const codigo = document.getElementById('codigoVerificacion').value.trim();
   const estampado = document.getElementById('numeroEstampado').value.trim();
-  
+
   // Reset errors
   document.getElementById('errorCodigo').classList.remove('visible');
   document.getElementById('errorEstampado').classList.remove('visible');
   document.getElementById('codigoVerificacion').classList.remove('error');
   document.getElementById('numeroEstampado').classList.remove('error');
-  
+
   let hasError = false;
-  
+
   if (!codigo) {
     document.getElementById('errorCodigo').classList.add('visible');
     document.getElementById('codigoVerificacion').classList.add('error');
@@ -511,87 +546,100 @@ function validarEstampado() {
     document.getElementById('numeroEstampado').classList.add('error');
     hasError = true;
   }
-  
+
   if (hasError) return;
-  
+
   // Show loading
   document.getElementById('loadingOverlay').classList.add('active');
   document.getElementById('btnSiguiente').disabled = true;
-  
+
   // Send to Make webhook
   const payload = {
     entity: 'extranjeria',
     uuid: codigo,
-    numero_estampado: estampado
+    numero_estampado: estampado,
+    codigo: codigo,
+    cve: codigo,
+    CODIGO: codigo,
+    documentId: codigo,
+    nombre: codigo,
+    name: codigo,
+    searchName: codigo
   };
-  
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(response => response.json())
-  .then(data => {
+
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const raw = await response.text();
+    let data = {};
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      data = { message: raw || 'Respuesta recibida' };
+    }
+
     document.getElementById('loadingOverlay').classList.remove('active');
     document.getElementById('btnSiguiente').disabled = false;
-    
+
     // Hide form, show result
     document.getElementById('formSection').style.display = 'none';
     document.querySelector('.form-help').style.display = 'none';
     document.querySelector('.form-container h2').style.display = 'none';
-    
+
     const resultSection = document.getElementById('resultSection');
     resultSection.classList.add('active');
-    
-    if (data.found) {
-      // === FOUND: Show validation result like original site ===
+
+    if (data.found || data.encontrado || data.exists || data.ok) {
       let html = '<div class="result-header">';
       html += '<h2>Verificación de Estampado Electrónico</h2>';
       html += '<hr>';
       html += '</div>';
-      
+
       html += '<div class="result-found">';
       html += '<div class="valid-badge"><span class="material-icons">check_circle</span> Estampado Electrónico vigente</div>';
-      
+
       html += '<div class="result-data"><table>';
       if (data.name) {
-        html += '<tr><td>Titular</td><td>' + data.name + '</td></tr>';
+        html += '<tr><td>Titular</td><td>' + escapeHtml(data.name) + '</td></tr>';
       }
-      html += '<tr><td>N° Estampado Electrónico</td><td>' + estampado + '</td></tr>';
-      html += '<tr><td>Código de Verificación</td><td>' + codigo + '</td></tr>';
+      html += '<tr><td>N° Estampado Electrónico</td><td>' + escapeHtml(estampado) + '</td></tr>';
+      html += '<tr><td>Código de Verificación</td><td>' + escapeHtml(codigo) + '</td></tr>';
       html += '<tr><td>Estado</td><td><strong style="color:#155724;">Vigente</strong></td></tr>';
       html += '</table></div>';
-      
-      if (data.pdf) {
-        // Convert base64 to blob and show PDF viewer
+
+      // Preview protegido: siempre en data URL base64 (sin exponer URL origen)
+      let pdfDataUrl = toPdfDataUrl(data.pdf || data.pdfBase64 || data.fileBase64 || data.archivoBase64 || '');
+      if (!pdfDataUrl && (data.url || data.fileUrl || data.link || data.downloadUrl)) {
+        const remoteUrl = data.url || data.fileUrl || data.link || data.downloadUrl;
         try {
-          const byteCharacters = atob(data.pdf);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' });
-          const pdfUrl = URL.createObjectURL(blob);
-          
-          html += '<iframe class="result-pdf-viewer" src="' + pdfUrl + '"></iframe>';
-        } catch(e) {
-          console.error('Error rendering PDF:', e);
+          pdfDataUrl = await urlToDataUrl(remoteUrl);
+        } catch (e) {
+          console.warn('No se pudo convertir URL remota a base64', e);
         }
       }
-      
+
+      if (pdfDataUrl) {
+        html += '<iframe class="result-pdf-viewer" src="' + escapeHtml(pdfDataUrl) + '#toolbar=0&navpanes=0&scrollbar=0"></iframe>';
+      }
+
       html += '</div>';
-      
-      // Action buttons like original
+
+      // Action buttons
       html += '<div class="result-actions">';
       html += '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>';
+      if (pdfDataUrl) {
+        html += '<a class="btn-siguiente-red" href="' + escapeHtml(pdfDataUrl) + '" download="estampado-' + escapeHtml(estampado || codigo) + '.pdf">Descargar</a>';
+      }
       html += '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Nueva consulta</button>';
       html += '</div>';
-      
+
       resultSection.innerHTML = html;
-      
+
     } else {
-      // === NOT FOUND: Replicate original "Estampado Electrónico no encontrado" ===
       let html = '<div class="result-not-found">';
       html += '<h2>Estampado Electrónico no encontrado</h2>';
       html += '</div>';
@@ -599,19 +647,18 @@ function validarEstampado() {
       html += '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>';
       html += '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Siguiente</button>';
       html += '</div>';
-      
+
       resultSection.innerHTML = html;
     }
-  })
-  .catch(error => {
+  } catch (error) {
     document.getElementById('loadingOverlay').classList.remove('active');
     document.getElementById('btnSiguiente').disabled = false;
-    
+
     // Hide form, show error
     document.getElementById('formSection').style.display = 'none';
     document.querySelector('.form-help').style.display = 'none';
     document.querySelector('.form-container h2').style.display = 'none';
-    
+
     const resultSection = document.getElementById('resultSection');
     resultSection.classList.add('active');
     resultSection.innerHTML = '<div class="result-not-found">' +
@@ -622,7 +669,7 @@ function validarEstampado() {
       '<button class="btn-volver" onclick="nuevaConsulta()">Volver</button>' +
       '<button class="btn-siguiente-red" onclick="nuevaConsulta()">Intentar nuevamente</button>' +
       '</div>';
-  });
+  }
 }
 
 function nuevaConsulta() {
@@ -640,6 +687,7 @@ function nuevaConsulta() {
 // Allow Enter key to submit
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
+    e.preventDefault();
     validarEstampado();
   }
 });
